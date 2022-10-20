@@ -48,8 +48,23 @@ app.post("/api/users", (req, res) => {
 
 app.post("/api/users/:_id/exercises", (req, res) => {
   console.log("\nNew exercise data submitted...");
-  console.log("- params: " + req.params);
-  console.log("- body: " + req.body);
+  console.log("- user id: " + req.params._id);
+  const exercise = {
+    description: req.body.description,
+    duration: Number(req.body.duration),
+    date: req.body.date,
+  };
+  console.log(exercise);
+  User.findByIdAndUpdate(
+    req.params._id,
+    { $push: { exercises: exercise } },
+    { new: true },
+    (err, data) => {
+      if (err) return console.log(err);
+      if (!data) return console.log("- No such user!");
+      res.json(data);
+    }
+  );
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
