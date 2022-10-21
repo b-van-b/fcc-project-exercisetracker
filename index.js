@@ -86,7 +86,6 @@ app.get("/api/users/:_id/logs", (req, res) => {
       // filter log
       let log = data.exercises.slice();
       // remove too-early entries
-      console.log(start);
       if (start) {
         start = new Date(start);
         log = log.filter((item) => {
@@ -110,12 +109,12 @@ app.get("/api/users/:_id/logs", (req, res) => {
       if (limit) {
         log = log.slice(0, limit);
       }
-      // get rid of _id key-value pairs
+      // map data to expected output
       log = log.map((item) => {
         return {
           description: item.description,
           duration: item.duration,
-          date: item.date,
+          date: item.date.toDateString(),
         };
       });
       // add log & count to answer
