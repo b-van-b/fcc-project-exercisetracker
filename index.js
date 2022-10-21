@@ -67,6 +67,66 @@ app.post("/api/users/:_id/exercises", (req, res) => {
   );
 });
 
+app.get("/api/users/:_id/logs", (req, res) => {
+  console.log("\nAsked for exercise records: id=" + req.params._id);
+  console.log(req.query);
+  let start = req.query.from,
+    end = req.query.to,
+    limit = req.query.limit;
+  User.findById(req.params._id, (err, data) => {
+    if (err) return console.log(err);
+    if (data) {
+      // gather relevant info into an object
+      const ans = {
+        _id: req.params._id,
+        username: data.username,
+        count: 0,
+        log: [],
+      };
+      // filter log
+      let log = data.exercises.slice();
+      // remove too-early entries
+      console.log(start);
+      if (start) {
+        start = new Date(start);
+        log = log.filter((item) => {
+          return item.date >= start;
+        });
+      }
+      // remove too-late entries
+      if (end) {
+        end = new Date(end);
+        log = log.filter((item) => {
+          return item.date <= end;
+        });
+      }
+      // sort
+      log.sort((a, b) => {
+        if (a > b) return -1;
+        if (a < b) return 1;
+        return 0;
+      });
+      // limit length
+      if (limit) {
+        log = log.slice(0, limit);
+      }
+      // get rid of _id key-value pairs
+      log = log.map((item) => {
+        return {
+          description: item.description,
+          duration: item.duration,
+          date: item.date,
+        };
+      });
+      // add log & count to answer
+      ans.log = log;
+      ans.count = log.length;
+
+      return res.json(ans);
+    }
+  });
+});
+
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log("Your app is listening on port " + listener.address().port);
 });

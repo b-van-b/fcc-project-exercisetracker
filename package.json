@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "node index.js",
-    "pretty": "prettier --write index.js"
+		"pretty": "prettier --write index.js"
 	},
 	"dependencies": {
 		"body-parser": "^1.20.1",
@@ -13,7 +13,8 @@
 		"dotenv": "^8.2.0",
 		"express": "^4.16.4",
 		"mongoose": "^6.6.5",
-		"prettier": "^2.7.1"
+		"prettier": "^2.7.1",
+		"validator": "^13.7.0"
 	},
 	"repository": {
 		"url": "https://github.com/freeCodeCamp/boilerplate-project-exercisetracker"
