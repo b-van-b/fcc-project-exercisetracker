@@ -62,7 +62,16 @@ app.post("/api/users/:_id/exercises", (req, res) => {
     (err, data) => {
       if (err) return console.log(err);
       if (!data) return console.log("- No such user!");
-      res.json(data);
+      // return expected output
+      const lastExercise = data.exercises[data.exercises.length - 1];
+      const ans = {
+        _id: req.params._id,
+        username: data.username,
+        duration: lastExercise.duration,
+        description: lastExercise.description,
+        date: lastExercise.date.toDateString(),
+      };
+      res.json(ans);
     }
   );
 });
