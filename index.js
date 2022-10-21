@@ -30,6 +30,15 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
+app.get("/api/users", (req, res) => {
+  User.find()
+    .select({ _id: 1, username: 1 })
+    .exec((err, data) => {
+      if (err) return console.log(err);
+      res.json(data);
+    });
+});
+
 app.post("/api/users", (req, res) => {
   const name = req.body.username.trim();
   if (!name) {
@@ -110,8 +119,8 @@ app.get("/api/users/:_id/logs", (req, res) => {
       }
       // sort
       log.sort((a, b) => {
-        if (a > b) return -1;
-        if (a < b) return 1;
+        if (a.date > b.date) return 1;
+        if (a.date < b.date) return -1;
         return 0;
       });
       // limit length
