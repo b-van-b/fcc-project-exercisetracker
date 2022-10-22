@@ -12,13 +12,13 @@ const formatDates = (obj) => {
   // console.log("Formatting dates...");
   // console.log("Object: \n"+obj);
   // console.log("Keys: \n"+Object.keys(obj));
-  Object.keys(obj).forEach((key)=>{
+  Object.keys(obj).forEach((key) => {
     // recurse through an array of objects when found
-    if (Array.isArray(obj[key])){
-      res[key] = obj[key].map(item => {
+    if (Array.isArray(obj[key])) {
+      res[key] = obj[key].map((item) => {
         return formatDates(item);
       });
-    } else if (obj[key] instanceof Date){
+    } else if (obj[key] instanceof Date) {
       // format nice date strings for Date objects
       // console.log("Found a date: "+obj[key])
       res[key] = obj[key].toDateString();

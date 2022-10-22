@@ -56,7 +56,7 @@ const createExercise = (userId, description, duration, date, done) => {
     user_id: userId,
     description: description,
     duration: Number(duration),
-    date: date,
+    date: date || new Date(),
   });
   console.log("Inserting new exercise: \n" + exercise);
   // make sure the user exists, and get the username
