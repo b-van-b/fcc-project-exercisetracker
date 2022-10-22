@@ -62,7 +62,7 @@ const createExercise = (userId, description, duration, date, done) => {
   // make sure the user exists, and get the username
   User.findById(userId, (err, user) => {
     if (err) return console.log(err);
-    if (!user) return done(null, {});
+    if (!user) return done("user not found");
     // if user exists, add the exercise
     exercise.save((err, savedata) => {
       if (err) return console.log(err);
@@ -78,7 +78,45 @@ const createExercise = (userId, description, duration, date, done) => {
   });
 };
 
+const getExerciseLogs = (userId, searchParams, done) => {
+  // find user first
+  User.findById(userId)
+    .lean()
+    .exec((err, user) => {
+      if (err) return console.log(err);
+      if (!user) return done("user not found");
+      // build query filter
+      const filter = { user_id: userId };
+      if (searchParams.from || searchParams.to) {
+        filter.date = {};
+        if (searchParams.from) {
+          filter.date.$gte = new Date(searchParams.from);
+        }
+        if (searchParams.to) {
+          filter.date.$lte = new Date(searchParams.to);
+        }
+      }
+      // search with filter & sort
+      const logQuery = Exercise.find(filter)
+        .select({ _id: 0, user_id: 0, __v: 0 })
+        .sort({ date: 1 })
+        .lean();
+      // limit if requested
+      if (searchParams.limit) {
+        logQuery.limit(Number(searchParams.limit));
+      }
+      // handle data
+      logQuery.exec((err, data) => {
+        if (err) return console.log(err);
+        user.count = data.length;
+        user.log = data;
+        done(null, user);
+      });
+    });
+};
+
 exports.createUser = createUser;
 exports.findAllUsers = findAllUsers;
 exports.findUser = findUser;
 exports.createExercise = createExercise;
+exports.getExerciseLogs = getExerciseLogs;
