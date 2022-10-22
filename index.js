@@ -1,27 +1,9 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const app = express();
 const cors = require("cors");
+const { User } = require("./database");
 require("dotenv").config();
-
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-// user schema and model
-const userSchema = new mongoose.Schema({
-  username: String,
-  exercises: [
-    {
-      description: String,
-      duration: Number,
-      date: Date,
-    },
-  ],
-});
-const User = mongoose.model("User", userSchema);
 
 app.use(cors());
 app.use(express.static("public"));
