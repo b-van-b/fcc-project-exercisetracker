@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "node index.js",
-		"pretty": "prettier --write index.js"
+		"pretty": "prettier --write index.js database.js"
 	},
 	"dependencies": {
 		"body-parser": "^1.20.1",
