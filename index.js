@@ -5,6 +5,32 @@ const cors = require("cors");
 const database = require("./database");
 require("dotenv").config();
 
+const formatDates = (obj) => {
+  // format dates in an object and its nested arrays of objects
+  const res = {};
+  // iterate through all key-value pairs and make copies
+  // console.log("Formatting dates...");
+  // console.log("Object: \n"+obj);
+  // console.log("Keys: \n"+Object.keys(obj));
+  Object.keys(obj).forEach((key)=>{
+    // recurse through an array of objects when found
+    if (Array.isArray(obj[key])){
+      res[key] = obj[key].map(item => {
+        return formatDates(item);
+      });
+    } else if (obj[key] instanceof Date){
+      // format nice date strings for Date objects
+      // console.log("Found a date: "+obj[key])
+      res[key] = obj[key].toDateString();
+    } else {
+      // copy all other data types
+      res[key] = obj[key];
+    }
+  });
+  // console.log("Final result:\n"+res);
+  return res;
+};
+
 app.use(cors());
 app.use(express.static("public"));
 app.use("/api/users", bodyParser.urlencoded({ extended: false }));
@@ -38,7 +64,7 @@ app.post("/api/users/:_id/exercises", (req, res) => {
     req.body.date,
     (err, data) => {
       if (err) return console.log(err);
-      res.json(data);
+      res.json(formatDates(data));
     }
   );
 });
@@ -48,7 +74,7 @@ app.get("/api/users/:_id/logs", (req, res) => {
   console.log(req.query);
   database.getExerciseLogs(req.params._id, req.query, (err, data) => {
     if (err) return console.log(err);
-    res.json(data);
+    res.json(formatDates(data));
   });
 });
 
